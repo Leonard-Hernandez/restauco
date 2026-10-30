@@ -44,3 +44,4 @@ out/
 ### Local k8s secrets (use k8s/config/secret.example.yml) ###
 k8s/config/secret.yml
 .engram/
+.atl/
