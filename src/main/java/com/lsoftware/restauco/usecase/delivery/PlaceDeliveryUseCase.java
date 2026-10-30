@@ -71,7 +71,10 @@ public class PlaceDeliveryUseCase {
     // Not one transaction: the map lookup is a slow outside call and must not hold a DB connection
     public DeliveryView execute(DeliveryCommand cmd) {
         DeliverySettings settings = tenants.current().delivery();
-        if (!settings.open()) throw new DeliveryClosedException();
+        // A method chosen for delivery and deactivated later can leave no way to pay: closed, like the page shows
+        if (!settings.open() || paymentMethods.findAll().stream().noneMatch(m -> m.active() && settings.accepts(m.id()))) {
+            throw new DeliveryClosedException();
+        }
 
         String name = required(cmd.customerName(), 80, "NAME_REQUIRED", "Write your name");
         String phone = phone(cmd.phone());
