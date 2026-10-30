@@ -86,6 +86,8 @@ export default class AdminDeliveryComponent implements OnInit {
   readonly locating = signal(false);
   /** Active payment methods the owner can offer for delivery */
   readonly methods = signal<PaymentMethod[]>([]);
+  /** Methods ticked while editing; null until the owner touches one (the saved settings rule until then) */
+  private readonly picked = signal<number[] | null>(null);
 
   ngOnInit() {
     this.api.deliverySettings().subscribe({
@@ -95,18 +97,22 @@ export default class AdminDeliveryComponent implements OnInit {
     this.api.paymentMethods().subscribe({ next: (m) => this.methods.set(m.filter((x) => x.active)) });
   }
 
-  /** None chosen yet means every method is accepted */
-  accepts(id: number): boolean {
+  /** Active methods ticked. Saved [] means every active method; unticking all leaves none, not "all" */
+  private chosen(): number[] {
+    const picked = this.picked();
+    if (picked) return picked;
+    const active = this.methods().map((m) => m.id);
     const ids = this.form()?.paymentMethodIds ?? [];
-    return !ids.length || ids.includes(id);
+    return ids.length ? active.filter((id) => ids.includes(id)) : active;
+  }
+
+  accepts(id: number): boolean {
+    return this.chosen().includes(id);
   }
 
   toggleMethod(id: number) {
-    const f = this.form();
-    if (!f) return;
-    const current = this.methods().map((m) => m.id).filter((x) => this.accepts(x));
-    const next = current.includes(id) ? current.filter((x) => x !== id) : [...current, id];
-    this.form.set({ ...f, paymentMethodIds: next });
+    const current = this.chosen();
+    this.picked.set(current.includes(id) ? current.filter((x) => x !== id) : [...current, id]);
   }
 
   here() {
@@ -129,16 +135,23 @@ export default class AdminDeliveryComponent implements OnInit {
   save() {
     const f = this.form();
     if (!f) return;
-    if (this.methods().length && !this.methods().some((m) => this.accepts(m.id))) {
+    const chosen = this.chosen();
+    if (this.methods().length && !chosen.length) {
       this.error.set('Escoge al menos un método de pago para los domicilios.');
       return;
     }
+    // Every active one ticked is saved as [] (all), so methods created later are offered too.
+    // Methods not loaded (yet, or the request failed): keep the saved choice, never widen it to all
+    const loaded = this.methods().length > 0;
+    const all = loaded && this.methods().every((m) => chosen.includes(m.id));
+    const paymentMethodIds = !loaded ? f.paymentMethodIds : all ? [] : chosen;
     this.saving.set(true);
     this.saved.set(false);
     this.error.set(null);
-    this.api.saveDeliverySettings(f).subscribe({
+    this.api.saveDeliverySettings({ ...f, paymentMethodIds }).subscribe({
       next: (s) => {
         this.form.set(s);
+        this.picked.set(null);
         this.saving.set(false);
         this.saved.set(true);
       },

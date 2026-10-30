@@ -47,7 +47,7 @@ services:
       - restauco-api
       - restauco-app
     ports:
-      - "${GATEWAY_PORT:-8091}:80"
+      - "127.0.0.1:${GATEWAY_PORT:-8091}:80"
     volumes:
       - ./deploy/gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     # /authco goes to the shared authco
@@ -59,7 +59,8 @@ services:
     restart: unless-stopped
     image: cloudflare/cloudflared:2025.9.1
     profiles: ["demo"]
-    command: tunnel --no-autoupdate --url http://gateway:80
+    # The gateway's internal port, the only one that trusts CF-Connecting-IP (see nginx.conf)
+    command: tunnel --no-autoupdate --url http://gateway:8080
     depends_on:
       - gateway
 
