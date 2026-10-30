@@ -43,8 +43,10 @@ public class ManageDeliverySettingsUseCase {
         if (settings.fee() < 0 || settings.minOrder() < 0) {
             throw new InvalidDeliveryException("INVALID_FEE", "Amounts cannot be negative");
         }
-        Set<Long> known = paymentMethods.findAll().stream().map(PaymentMethod::id).collect(Collectors.toSet());
-        if (!known.containsAll(settings.paymentMethodIds())) throw new PaymentMethodNotFoundException();
+        // Only active methods: an inactive one in the list would narrow delivery to a way nobody can pay
+        Set<Long> usable = paymentMethods.findAll().stream().filter(PaymentMethod::active).map(PaymentMethod::id)
+                .collect(Collectors.toSet());
+        if (!usable.containsAll(settings.paymentMethodIds())) throw new PaymentMethodNotFoundException();
         return tenants.saveDelivery(current.current().id(), settings).delivery();
     }
 }

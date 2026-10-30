@@ -1,5 +1,6 @@
 package com.lsoftware.restauco.usecase.delivery;
 
+import com.lsoftware.restauco.entity.delivery.exception.DeliveryClosedException;
 import com.lsoftware.restauco.entity.delivery.exception.OutOfZoneException;
 import com.lsoftware.restauco.entity.delivery.exception.PlaceNotFoundException;
 import com.lsoftware.restauco.entity.delivery.gateway.DeliveryGateway;
@@ -71,6 +72,8 @@ class PlaceDeliveryUseCaseTest {
     void setUp() {
         when(dishes.findAllById(any())).thenReturn(List.of(SIFRINA));
         when(methods.findById(1L)).thenReturn(Optional.of(new PaymentMethod(1L, "Efectivo", 1, true)));
+        when(methods.findAll()).thenReturn(List.of(new PaymentMethod(1L, "Efectivo", 1, true),
+                new PaymentMethod(2L, "Nequi", 2, true)));
         when(geocoder.reverse(anyDouble(), anyDouble()))
                 .thenReturn(Optional.of(new Place(LAT, LNG, "Calle 5B", null, "San Fernando", "Cali")));
         when(sessions.save(any())).thenAnswer(inv -> {
@@ -151,6 +154,21 @@ class PlaceDeliveryUseCaseTest {
 
         assertThatThrownBy(() -> strict.execute(order("Cl. 5B # 36-20", LAT, LNG, "3001234567")))
                 .isInstanceOf(PaymentMethodNotFoundException.class);
+    }
+
+    @Test
+    void aDeliveryWhoseOnlyMethodsWereDeactivatedIsClosed() {
+        DeliverySettings nequiOnly = new DeliverySettings(true, 3.4307, -76.5428, 4, 5000, 0, List.of(2L));
+        Tenant tenant = new Tenant(1L, "toches-arepas", "Toche's", ZoneId.of("America/Bogota"), null, null, Map.of(), nequiOnly);
+        when(methods.findAll()).thenReturn(List.of(new PaymentMethod(1L, "Efectivo", 1, true),
+                new PaymentMethod(2L, "Nequi", 2, false)));
+        PlaceDeliveryUseCase strict = new PlaceDeliveryUseCase(new LocateDeliveryUseCase(geocoder, () -> tenant),
+                new OrderPricer(dishes), methods, sessions, deliveries, tickets, events, () -> tenant,
+                TransactionOperations.withoutTransaction(), clock, 3);
+
+        assertThatThrownBy(() -> strict.execute(order("Cl. 5B # 36-20", LAT, LNG, "3001234567")))
+                .isInstanceOf(DeliveryClosedException.class);
+        verifyNoInteractions(geocoder);
     }
 
     private static DeliveryCommand order(String address, double lat, double lng, String phone) {
