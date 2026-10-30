@@ -1,0 +1,37 @@
+# Same single-origin routing as deploy/gateway/nginx.conf (docker compose).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: restauco
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "6m"
+    # Live updates (Server-Sent Events): unbuffered, long-lived
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /restauco-api
+        pathType: Prefix
+        backend:
+          service:
+            name: restauco
+            port:
+              number: 8089
+      - path: /authco
+        pathType: Prefix
+        backend:
+          service:
+            name: authco
+            port:
+              number: 8087
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: restauco-app
+            port:
+              number: 80

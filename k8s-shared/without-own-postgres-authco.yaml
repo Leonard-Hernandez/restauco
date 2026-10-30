@@ -1,0 +1,42 @@
+# These live in the platform namespace now.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+$patch: delete
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authco
+$patch: delete
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authco
+$patch: delete
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: authco-secret
+$patch: delete

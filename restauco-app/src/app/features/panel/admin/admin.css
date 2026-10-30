@@ -1,0 +1,24 @@
+/* Shared by the owner's admin screens */
+:host { display: block; }
+.wrap { max-width: 52rem; margin: 0 auto; padding: 1.2rem 0.9rem 4rem; }
+.page-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.page-head h1 { margin: 0; font-size: 2.2rem; color: var(--brand); }
+.page-lead { margin: 0.3rem 0 1rem; color: var(--ink-muted); }
+.actions { display: flex; gap: 0.5rem; }
+.link { display: inline-flex; align-items: center; gap: 0.25rem; background: none; border: 0; color: var(--brand); font: inherit; font-weight: 700; min-height: 40px; }
+.tag { font-size: 0.72rem; font-weight: 800; padding: 0.08rem 0.45rem; border-radius: 999px; text-transform: uppercase; font-family: var(--font-sans); letter-spacing: 0.03em; }
+.tag.muted { background: rgb(255 255 255 / 0.1); color: var(--ink-muted); }
+.tag.warn { background: color-mix(in oklab, var(--warn) 22%, transparent); color: var(--warn); }
+.tag.ok { background: color-mix(in oklab, var(--ok) 22%, transparent); color: var(--ok); }
+.switch { flex: none; min-width: 7rem; min-height: 38px; border-radius: 999px; border: 0; font-family: var(--font-label); text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em; font-size: 0.85rem; background: color-mix(in oklab, var(--ok) 22%, transparent); color: var(--ok); }
+.switch[aria-checked="false"] { background: color-mix(in oklab, var(--danger) 25%, transparent); color: var(--danger); }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.1rem 0.4rem; }
+.sheet-head h2 { margin: 0; font-size: 1.6rem; }
+.body { padding: 0 1.1rem 1rem; display: grid; gap: 0.8rem; }
+.f { display: grid; gap: 0.3rem; font-size: 0.9rem; color: var(--ink-muted); }
+.sheet-foot { display: flex; gap: 0.5rem; align-items: center; padding: 0.85rem 1.1rem 1rem; border-top: 1px solid var(--line); }
+.grow { flex: 1; }
+.list { list-style: none; margin: 1rem 0 0; padding: 0; }
+.list > li { display: flex; align-items: center; gap: 0.6rem; min-height: 60px; border-bottom: 1px solid var(--line); flex-wrap: wrap; padding: 0.4rem 0; }
+.add-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: end; margin-top: 1rem; padding: 0.9rem; border-radius: 16px; background: var(--ground-raised); border: 1px solid var(--line); }
+.add-row .field { flex: 1; min-width: 9rem; }

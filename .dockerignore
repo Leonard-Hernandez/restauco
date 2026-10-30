@@ -1,0 +1,9 @@
+.gradle
+build
+bin
+restauco-app
+k8s
+deploy
+.git
+.claude
+*.md

@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# restauco on the shared Postgres + authco of the platform (../../platform/k8s, namespace
+# platform) instead of its own. Deploy the platform first, then:
+#   kubectl apply -k k8s-shared
+# The pods keep using the hosts "postgres" and "authco": here they are ExternalName
+# services pointing at the platform namespace. postgres-secret holds this app's
+# database credentials (the platform superuser restauco, owner of the restauco database).
+# The origin (http://restauco.localhost) must be listed in the platform's authco ConfigMap
+# (issuer, CORS, resources).
+resources:
+  - ../k8s
+
+patches:
+  - path: without-own-postgres-authco.yaml
+  - path: platform-services.yaml
+  - path: configmaps.yaml
+  - target:
+      kind: Ingress
+      name: restauco
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: restauco.localhost

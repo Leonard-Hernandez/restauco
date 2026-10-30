@@ -1,0 +1,7 @@
+{
+  "apiUrl": "/restauco-api",
+  "authUrl": "http://localhost:8091/authco",
+  "clientId": "restauco-app",
+  "resource": "http://localhost:8091/restauco-api",
+  "tenant": "toches-arepas"
+}

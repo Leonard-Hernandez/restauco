@@ -1,0 +1,221 @@
+@import "tailwindcss";
+@import "./themes/toches-arepas.css";
+
+@theme inline {
+  --color-ground: var(--ground);
+  --color-ground-raised: var(--ground-raised);
+  --color-ground-sunken: var(--ground-sunken);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-brand: var(--brand);
+  --color-brand-bright: var(--brand-bright);
+  --color-brand-ink: var(--brand-ink);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    scrollbar-color: var(--ground-raised) var(--ground);
+  }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  ::selection { background: var(--brand); color: var(--brand-ink); }
+  :focus-visible { outline: 2px solid var(--brand-bright); outline-offset: 3px; }
+  input, textarea, select { caret-color: var(--brand); }
+  h1, h2, h3 { text-wrap: balance; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+}
+
+@layer components {
+  /* The yellow band of the menu board */
+  .band {
+    background-color: var(--brand);
+    background-image: var(--band-pattern);
+    background-size: var(--band-size) var(--band-size);
+    color: var(--brand-ink);
+  }
+  /* Thin venezuelan tricolor */
+  .flag-rule {
+    height: 4px;
+    background: linear-gradient(to right, var(--flag-1) 0 33.3%, var(--flag-2) 33.3% 66.6%, var(--flag-3) 66.6%);
+  }
+  .label {
+    font-family: var(--font-label);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+  .tabular { font-variant-numeric: tabular-nums lining-nums; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 48px;
+    padding: 0 1.25rem;
+    border-radius: 999px;
+    border: 0;
+    font-family: var(--font-label);
+    font-weight: 600;
+    font-size: 1.02rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 160ms var(--ease-out-expo), transform 120ms var(--ease-out-expo), opacity 160ms;
+  }
+  .btn:active:not(:disabled) { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.5; }
+  .btn-brand { background: var(--brand); color: var(--brand-ink); }
+  .btn-brand:hover:not(:disabled) { background: var(--brand-bright); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1.5px var(--line);
+  }
+  .btn-ghost:hover:not(:disabled) { background: rgb(255 255 255 / 0.06); }
+  .btn-ok { background: var(--ok); color: #04150c; }
+  .btn-danger { background: transparent; color: var(--danger); box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--danger) 55%, transparent); }
+  .btn-sm { min-height: 40px; padding: 0 0.95rem; font-size: 0.92rem; }
+
+  .icon-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 0;
+    background: rgb(255 255 255 / 0.07);
+    color: var(--ink);
+  }
+  .icon-btn:hover { background: rgb(255 255 255 / 0.12); }
+
+  .field {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.6rem 0.9rem;
+    border-radius: 12px;
+    background: var(--ground-sunken);
+    border: 1.5px solid var(--line);
+    color: var(--ink);
+    font: inherit;
+  }
+  .field::placeholder { color: var(--ink-faint); }
+  .field:focus { outline: none; border-color: var(--brand); }
+  textarea.field { min-height: 84px; resize: vertical; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 40px;
+    padding: 0 0.95rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--line);
+    background: transparent;
+    color: var(--ink-muted);
+    font-family: var(--font-label);
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .chip[aria-pressed="true"], .chip.on {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: var(--brand-ink);
+  }
+  .chip.off[aria-pressed="true"] {
+    background: color-mix(in oklab, var(--danger) 18%, transparent);
+    border-color: var(--danger);
+    color: var(--ink);
+  }
+
+  .badge {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.45rem;
+    height: 1.45rem;
+    padding: 0 0.4rem;
+    border-radius: 999px;
+    font-family: var(--font-label);
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: var(--brand);
+    color: var(--brand-ink);
+  }
+
+  .card {
+    background: var(--ground-raised);
+    border-radius: 18px;
+    border: 1px solid var(--line);
+  }
+
+  /* Bottom sheet (phones) / centered dialog (wide screens) */
+  .scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgb(0 0 0 / 0.62);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    animation: fade-in 160ms ease-out;
+  }
+  .sheet {
+    width: 100%;
+    max-width: 34rem;
+    max-height: 92dvh;
+    overflow: auto;
+    overscroll-behavior: contain;
+    background: var(--ground-raised);
+    border-radius: 22px 22px 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    animation: sheet-up 260ms var(--ease-out-expo);
+  }
+  @media (min-width: 768px) {
+    .scrim { align-items: center; }
+    .sheet { border-radius: 22px; max-height: 88dvh; }
+  }
+
+  .empty {
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: var(--ink-faint);
+  }
+  .error-text { color: var(--danger); font-weight: 600; }
+
+  @keyframes fade-in { from { opacity: 0; } }
+  @keyframes sheet-up { from { transform: translateY(24px); opacity: 0; } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

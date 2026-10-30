@@ -1,0 +1,76 @@
+server:
+  port: ${PORT:8089}
+  # Every endpoint lives under /restauco-api (same path the ingress / gateway routes)
+  servlet:
+    context-path: /restauco-api
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: restauco
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5434/restauco}
+    username: ${USER_DB:postgres}
+    password: ${PASSWORD_DB:mysecretpassword}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    # Off: the SSE streams are long-lived requests and must not pin a DB connection each
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+  mvc:
+    async:
+      # SSE emitters set their own timeout
+      request-timeout: -1
+  devtools:
+    restart:
+      enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        # /actuator/health/liveness and /actuator/health/readiness
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,db
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+restauco:
+  # authco: public issuer (iss claim), internal URL (JWKS, userinfo) and restauco audience
+  security:
+    issuer: ${AUTHCO_ISSUER:http://localhost:8087/authco}
+    internal-url: ${AUTHCO_INTERNAL_URL:${restauco.security.issuer}}
+    resource-id: ${RESTAUCO_RESOURCE_ID:http://localhost:8089/restauco-api}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4400}
+  # Dish photos, one folder per restaurant
+  uploads:
+    dir: ${RESTAUCO_UPLOADS:./uploads}
+  # Orders placed from a table QR, before the waiter approves them
+  qr:
+    max-pending-per-table: ${QR_MAX_PENDING_PER_TABLE:3}
+  # First OWNER invited into the staff panel (linked on first login with that Google email)
+  bootstrap:
+    owner-email: ${BOOTSTRAP_OWNER_EMAIL:}
+    tenant: ${BOOTSTRAP_TENANT:toches-arepas}

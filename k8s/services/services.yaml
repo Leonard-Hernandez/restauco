@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector: { app: postgres }
+  ports:
+  - port: 5432
+    targetPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authco
+spec:
+  selector: { app: authco }
+  ports:
+  - port: 8087
+    targetPort: 8087
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restauco
+spec:
+  selector: { app: restauco }
+  ports:
+  - port: 8089
+    targetPort: 8089
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restauco-app
+spec:
+  selector: { app: restauco-app }
+  ports:
+  - port: 80
+    targetPort: 80

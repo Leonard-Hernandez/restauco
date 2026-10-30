@@ -1,0 +1,37 @@
+/*
+ * Toche's Arepas: venezuelan street food in San Fernando, Cali.
+ * Taken from their menu board: black board, arepa-yellow bands, white condensed caps,
+ * a chunky rounded wordmark and the venezuelan tricolor.
+ * Another restaurant = another file with the same tokens.
+ */
+:root {
+  --ground: #0e0d0b;
+  --ground-raised: #1a1815;
+  --ground-sunken: #070706;
+  --ink: #f8f4ea;
+  --ink-muted: #bdb6a7;
+  --ink-faint: #8a8476;
+  --line: rgb(248 244 234 / 0.11);
+
+  --brand: #ffc21a;
+  --brand-bright: #ffd552;
+  --brand-ink: #161005;
+
+  --ok: #4fc98d;
+  --warn: #ff9f1c;
+  --danger: #ff5b4f;
+
+  --flag-1: #ffcd00;
+  --flag-2: #1d4fc4;
+  --flag-3: #d8262f;
+
+  --font-display: "Lilita One", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --font-label: "Oswald", "Arial Narrow", sans-serif;
+  --font-sans: "Nunito Sans", system-ui, sans-serif;
+
+  /* The yellow band of the menu board, with arepas (circles) drawn in a darker yellow */
+  --band-pattern:
+    radial-gradient(circle at 25% 30%, transparent 13px, rgb(22 16 5 / 0.13) 14px 16px, transparent 17px),
+    radial-gradient(circle at 75% 75%, transparent 9px, rgb(22 16 5 / 0.11) 10px 12px, transparent 13px);
+  --band-size: 72px;
+}

@@ -1,0 +1,49 @@
+# PUBLIC_URL of the stack: every http://localhost below is the ingress origin.
+# Change them together when the site gets its real domain (https://...).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: restauco
+data:
+  db_url: jdbc:postgresql://postgres:5432/restauco
+  # Public issuer: must match the exact "iss" claim emitted by authco.
+  authco_issuer: http://localhost/authco
+  # In-cluster address used to fetch JWKS/userinfo without leaving the cluster.
+  authco_internal_url: http://authco:8087/authco
+  restauco_resource_id: http://localhost/restauco-api
+  cors_allowed_origins: http://localhost
+  bootstrap_tenant: toches-arepas
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authco
+data:
+  db_url: jdbc:postgresql://postgres:5432/authco
+  authco_issuer: http://localhost/authco
+  cors_allowed_origins: http://localhost
+  # First entry is the default audience of issued tokens.
+  authco_resources: http://localhost/restauco-api
+  session_timeout: 8h
+  # restauco-app, seeded as a public PKCE client on startup (only if missing).
+  spa_client_id: restauco-app
+  spa_client_redirect_uris: http://localhost/auth/callback
+  spa_client_post_logout_redirect_uris: http://localhost/
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: restauco-app
+data:
+  api_url: /restauco-api
+  auth_url: http://localhost/authco
+  auth_client_id: restauco-app
+  auth_resource: http://localhost/restauco-api
+  tenant: toches-arepas
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres
+data:
+  database: restauco

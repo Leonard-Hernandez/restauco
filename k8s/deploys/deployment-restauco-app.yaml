@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: restauco-app
+  name: restauco-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restauco-app
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: restauco-app
+    spec:
+      containers:
+      - image: leonard20/restauco-app:latest
+        imagePullPolicy: IfNotPresent
+        name: restauco-app
+        ports:
+        - containerPort: 80
+        # Written to /config.json at container start
+        env:
+        - name: API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: restauco-app
+              key: api_url
+        - name: AUTH_URL
+          valueFrom:
+            configMapKeyRef:
+              name: restauco-app
+              key: auth_url
+        - name: AUTH_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: restauco-app
+              key: auth_client_id
+        - name: AUTH_RESOURCE
+          valueFrom:
+            configMapKeyRef:
+              name: restauco-app
+              key: auth_resource
+        - name: TENANT
+          valueFrom:
+            configMapKeyRef:
+              name: restauco-app
+              key: tenant
+        resources:
+          requests:
+            cpu: 20m
+            memory: 32Mi
+          limits:
+            memory: 128Mi
+        readinessProbe:
+          httpGet:
+            path: /config.json
+            port: 80
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 30

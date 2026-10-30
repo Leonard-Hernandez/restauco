@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: restauco
+
+resources:
+  - config/namespace.yml
+  - config/configmap.yml
+  - config/secret.yml
+  - volumes/pvcs.yml
+  - deploys/deployment-postgres.yaml
+  - deploys/deployment-authco.yaml
+  - deploys/deployment-restauco.yaml
+  - deploys/deployment-restauco-app.yaml
+  - services/services.yaml
+  - ingress/ingress.yaml
+
+configMapGenerator:
+  # Creates the authco database next to restauco on first start
+  - name: postgres-init
+    files:
+      - init-databases.sh=config/init-databases.sh
+
+generatorOptions:
+  disableNameSuffixHash: true

@@ -1,0 +1,17 @@
+# Own origin: http://restauco.localhost (each app needs its own host once authco is shared).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: restauco
+data:
+  authco_issuer: http://restauco.localhost/authco
+  restauco_resource_id: http://restauco.localhost/restauco-api
+  cors_allowed_origins: http://restauco.localhost
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: restauco-app
+data:
+  auth_url: http://restauco.localhost/authco
+  auth_resource: http://restauco.localhost/restauco-api
