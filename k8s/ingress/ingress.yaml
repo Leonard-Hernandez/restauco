@@ -1,4 +1,7 @@
 # Same single-origin routing as deploy/gateway/nginx.conf (docker compose).
+# ingress-nginx replaces X-Forwarded-For with the peer address by default, and the API trusts it
+# for rate limits: never turn on use-forwarded-headers / compute-full-forwarded-for without also
+# narrowing proxy-real-ip-cidr to the real load balancer.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

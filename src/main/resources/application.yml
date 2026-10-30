@@ -3,6 +3,8 @@ server:
   # Every endpoint lives under /restauco-api (same path the ingress / gateway routes)
   servlet:
     context-path: /restauco-api
+  # X-Forwarded-For is trusted as-is (rate limits key on it): the API is only reached through the
+  # gateway / ingress, which replace it with the real client address instead of appending to it
   forward-headers-strategy: framework
 
 spring:

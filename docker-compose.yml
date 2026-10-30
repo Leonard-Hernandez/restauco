@@ -59,7 +59,8 @@ services:
     restart: unless-stopped
     image: cloudflare/cloudflared:2025.9.1
     profiles: ["demo"]
-    command: tunnel --no-autoupdate --url http://gateway:80
+    # The gateway's internal port, the only one that trusts CF-Connecting-IP (see nginx.conf)
+    command: tunnel --no-autoupdate --url http://gateway:8080
     depends_on:
       - gateway
 
