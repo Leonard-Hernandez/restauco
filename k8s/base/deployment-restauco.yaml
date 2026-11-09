@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: restauco
+  name: restauco
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restauco
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: restauco
+    spec:
+      containers:
+      - image: leonard20/restauco
+        name: restauco
+        ports:
+        - containerPort: 8089
+        envFrom:
+         - configMapRef:
+              name: restauco-config
+         - secretRef:
+              name: restauco-secrets
+        volumeMounts:
+        - name: restauco-pvc
+          mountPath: /data/uploads
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            memory: 1Gi
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 100
+          runAsGroup: 101
+          allowPrivilegeEscalation: false
+        startupProbe:
+          httpGet:
+            path: /restauco-api/actuator/health/liveness
+            port: 8089
+          periodSeconds: 10
+          failureThreshold: 30
+        readinessProbe:
+          httpGet:
+            path: /restauco-api/actuator/health/readiness
+            port: 8089
+          periodSeconds: 10
+          timeoutSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /restauco-api/actuator/health/liveness
+            port: 8089
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 3
+      volumes:
+      - name: restauco-pvc
+        persistentVolumeClaim:
+          claimName: restauco-pvc
+

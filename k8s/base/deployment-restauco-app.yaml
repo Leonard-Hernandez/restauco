@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: restauco-app
+  name: restauco-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restauco-app
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: restauco-app
+    spec:
+      containers:
+      - image: leonard20/restauco-app
+        name: restauco-app
+        ports:
+        - containerPort: 80
+        envFrom:
+          - configMapRef:
+              name: restauco-app-config
+        resources:
+          requests:
+            cpu: 20m
+            memory: 32Mi
+          limits:
+            memory: 128Mi
+        readinessProbe:
+          httpGet:
+            path: /config.json
+            port: 80
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 30
