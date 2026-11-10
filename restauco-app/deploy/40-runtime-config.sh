@@ -11,3 +11,5 @@ cat > /usr/share/nginx/html/config.json <<JSON
   "tenant": "${TENANT}"
 }
 JSON
+
+chmod 644 /usr/share/nginx/html/config.json
