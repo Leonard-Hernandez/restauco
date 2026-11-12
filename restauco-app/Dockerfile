@@ -3,7 +3,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY . .
-RUN npx ng build
+# Host umask can leave files 600; nginx runs as uid 101 and must read every asset.
+RUN npx ng build && chmod -R a+rX dist
 
 FROM nginx:1.27-alpine
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
